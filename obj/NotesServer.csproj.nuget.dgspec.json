@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Coding Projects\\C#\\NotesServer\\NotesServer.csproj": {}
+    "E:\\Coding Projects\\C#\\C--1st_Server\\NotesServer.csproj": {}
   },
   "projects": {
-    "E:\\Coding Projects\\C#\\NotesServer\\NotesServer.csproj": {
+    "E:\\Coding Projects\\C#\\C--1st_Server\\NotesServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Coding Projects\\C#\\NotesServer\\NotesServer.csproj",
+        "projectUniqueName": "E:\\Coding Projects\\C#\\C--1st_Server\\NotesServer.csproj",
         "projectName": "NotesServer",
-        "projectPath": "E:\\Coding Projects\\C#\\NotesServer\\NotesServer.csproj",
+        "projectPath": "E:\\Coding Projects\\C#\\C--1st_Server\\NotesServer.csproj",
         "packagesPath": "C:\\Users\\KWII6\\.nuget\\packages\\",
-        "outputPath": "E:\\Coding Projects\\C#\\NotesServer\\obj\\",
+        "outputPath": "E:\\Coding Projects\\C#\\C--1st_Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Ve+9S/od9LTA4O0ZhsJSXGpYip8wpYCfmhoU1d1kpB4aCacF8DJS95fYLhi3FMUkQZ8V73RWHg+jonBhlpN4WA==",
+  "dgSpecHash": "0OnAU+RlYhOGLFqavGRnNU3z0LQs8UAukLZLDfWGCaxz0HMpiCEmdtrz16R85EQJg7SspkETLlgErO90Ok3pmg==",
   "success": true,
-  "projectFilePath": "E:\\Coding Projects\\C#\\NotesServer\\NotesServer.csproj",
+  "projectFilePath": "E:\\Coding Projects\\C#\\C--1st_Server\\NotesServer.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
