@@ -30,7 +30,7 @@ namespace NotesServer.Controllers
                 object result = ReadJSON(filePath);
                 if (result is NotesJSON notes)
                 {
-                    return Ok(result);
+                    return Ok(notes);
                 }
                 else
                 {
@@ -63,8 +63,17 @@ namespace NotesServer.Controllers
                 });
 
                 _logger.LogInformation("Recieved Note: {@NoteObj}", serializedNote);
+
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
+                NotesJSON result = ReadJSON(filePath);
+                //var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
+                //{
+                //    WriteIndented = true
+                //});
+                //_logger.LogInformation("Data in db.json: {@NotesJSON}", serializedDB);
                 
-                return Ok("note created");
+                return Ok(result);
+
             }
             catch(Exception e)
             {
@@ -73,17 +82,17 @@ namespace NotesServer.Controllers
             }
         }
 
-        public object ReadJSON(string filepath)
+        public NotesJSON ReadJSON(string filepath)
         {
             try
             {
                 string jsonString = System.IO.File.ReadAllText(filepath);
                 NotesJSON notes = JsonSerializer.Deserialize<NotesJSON>(jsonString);
-                return notes;
+                return notes ?? new NotesJSON();
             } catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return null;
+                return new NotesJSON();
             }
         }
     }
