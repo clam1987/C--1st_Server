@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NotesServer.Models;
 using System;
 using System.IO;
@@ -10,6 +11,15 @@ namespace NotesServer.Controllers
     [Route("api/[controller]")]
     public class NotesController : ControllerBase
     {
+        // Logging services
+        private readonly ILogger<NotesController> _logger;
+
+        public NotesController(ILogger<NotesController> logger)
+        {
+            _logger = logger;
+        }
+
+        // GET Route for Notes
         [HttpGet]
         public IActionResult Get()
         {
@@ -41,8 +51,27 @@ namespace NotesServer.Controllers
             }
         }
 
-        //[HttpPost]
-        //public IActionResult
+        // POST Route for Notes
+        [HttpPost]
+        public IActionResult AddNote([FromBody] NoteObj note)
+        {
+            try
+            {
+                var serializedNote = JsonSerializer.Serialize(note, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
+                _logger.LogInformation("Recieved Note: {@NoteObj}", serializedNote);
+                
+                return Ok("note created");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
+            }
+        }
 
         public object ReadJSON(string filepath)
         {
