@@ -57,22 +57,35 @@ namespace NotesServer.Controllers
         {
             try
             {
-                var serializedNote = JsonSerializer.Serialize(note, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-
-                _logger.LogInformation("Recieved Note: {@NoteObj}", serializedNote);
-
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
-                NotesJSON result = ReadJSON(filePath);
-                //var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
+                // This is to try and read the note in the logs - ignore this and just pass in notes for solution
+                //var serializedNote = JsonSerializer.Serialize(note, new JsonSerializerOptions
                 //{
                 //    WriteIndented = true
                 //});
+                //if (serializedNote == null)
+                //{
+                //    return BadRequest("Invalid note format.");
+                //}
+
+                //_logger.LogInformation("Recieved Note: {@NoteObj}", serializedNote);
+
+
+                // read the json here and added it
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
+                NotesJSON result = ReadJSON(filePath);
+                note.id = result.notes.Count;
+                result.notes.Add(note);
+
+                // Serialize and write over here
+                var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
                 //_logger.LogInformation("Data in db.json: {@NotesJSON}", serializedDB);
-                
-                return Ok(result);
+
+                System.IO.File.WriteAllText(filePath, serializedDB);
+
+                return Ok("Note added");
 
             }
             catch(Exception e)
@@ -82,7 +95,91 @@ namespace NotesServer.Controllers
             }
         }
 
-        public NotesJSON ReadJSON(string filepath)
+        [HttpPut]
+        public IActionResult EditNote([FromBody] NoteObj note)
+        {
+            try
+            {
+                // Logging to make sure I recieve the correct information
+                //var serializedNote = JsonSerializer.Serialize(note, new JsonSerializerOptions
+                //{
+                //    WriteIndented = true
+                //});
+                //if (serializedNote == null)
+                //{
+                //    return BadRequest("Invalid note format.");
+                //}
+
+                //_logger.LogInformation("Recieved Note: {@NoteObj}", serializedNote);
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
+                NotesJSON result = ReadJSON(filePath);
+
+                int noteFound = result.notes.FindIndex(noteobj => noteobj.id == note.id);
+
+                if(noteFound == -1)
+                {
+                    return Ok("Note not found");
+                }
+                else
+                {
+                    result.notes[noteFound] = note;
+
+                    var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
+
+                    _logger.LogInformation("Recieved Note: {@NoteObj}", serializedDB);
+                    System.IO.File.WriteAllText(filePath, serializedDB);
+
+                    return Ok("Note edited");
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteNote([FromBody] NoteObj note)
+        {
+            try
+            {
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
+                NotesJSON result = ReadJSON(filePath);
+
+                int noteFound = result.notes.FindIndex(noteobj => noteobj.id == note.id);
+
+                if (noteFound == -1)
+                {
+                    return Ok("Note not found");
+                }
+                else
+                {
+                    result.notes.RemoveAt(noteFound);
+
+                    var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
+
+                    _logger.LogInformation("Recieved Note: {@NoteObj}", serializedDB);
+                    System.IO.File.WriteAllText(filePath, serializedDB);
+
+                    return Ok("Note deleted");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+
+        private NotesJSON ReadJSON(string filepath)
         {
             try
             {

@@ -1,5 +1,21 @@
 {
-	"username": "kwii626",
-	"id": 1,
-	"notes": []
+  "username": "kwii626",
+  "id": 1,
+  "notes": [
+    {
+      "title": "First Post",
+      "content": "Hello World!",
+      "id": 0
+    },
+    {
+      "title": "Second Post",
+      "content": "Hello World!",
+      "id": 1
+    },
+    {
+      "title": "Third Post",
+      "content": "Hello World!",
+      "id": 2
+    }
+  ]
 }
