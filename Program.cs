@@ -1,13 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+    
 namespace NotesServer
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            // Old starter code
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<NotesDbContext>();
 
             var app = builder.Build();
 

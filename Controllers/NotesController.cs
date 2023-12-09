@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NotesServer.Models;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace NotesServer.Controllers
@@ -13,10 +15,12 @@ namespace NotesServer.Controllers
     {
         // Logging services
         private readonly ILogger<NotesController> _logger;
+        private readonly NotesDbContext _dbContext;
 
-        public NotesController(ILogger<NotesController> logger)
+        public NotesController(ILogger<NotesController> logger, NotesDbContext dbContext)
         {
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         // GET Route for Notes
@@ -25,17 +29,7 @@ namespace NotesServer.Controllers
         {
             try
             {
-                Console.WriteLine("Accessing db.json");
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
-                object result = ReadJSON(filePath);
-                if (result is NotesJSON notes)
-                {
-                    return Ok(notes);
-                }
-                else
-                {
-                    return BadRequest("Unable to deserialize JSON.");
-                }
+                return Ok("Place Holder to grab notes from database.");
             }
             catch (FileNotFoundException)
             {
@@ -53,7 +47,7 @@ namespace NotesServer.Controllers
 
         // POST Route for Notes
         [HttpPost]
-        public IActionResult AddNote([FromBody] NoteObj note)
+        public IActionResult AddNote([FromBody] Note note)
         {
             try
             {
@@ -67,23 +61,8 @@ namespace NotesServer.Controllers
                 //    return BadRequest("Invalid note format.");
                 //}
 
-                //_logger.LogInformation("Recieved Note: {@NoteObj}", serializedNote);
+                //_logger.LogInformation("Recieved Note: {@Note}", serializedNote);
 
-
-                // read the json here and added it
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
-                NotesJSON result = ReadJSON(filePath);
-                note.id = result.notes.Count;
-                result.notes.Add(note);
-
-                // Serialize and write over here
-                var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-                //_logger.LogInformation("Data in db.json: {@NotesJSON}", serializedDB);
-
-                System.IO.File.WriteAllText(filePath, serializedDB);
 
                 return Ok("Note added");
 
@@ -96,7 +75,7 @@ namespace NotesServer.Controllers
         }
 
         [HttpPut]
-        public IActionResult EditNote([FromBody] NoteObj note)
+        public IActionResult EditNote([FromBody] Note note)
         {
             try
             {
@@ -110,30 +89,8 @@ namespace NotesServer.Controllers
                 //    return BadRequest("Invalid note format.");
                 //}
 
-                //_logger.LogInformation("Recieved Note: {@NoteObj}", serializedNote);
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
-                NotesJSON result = ReadJSON(filePath);
-
-                int noteFound = result.notes.FindIndex(noteobj => noteobj.id == note.id);
-
-                if(noteFound == -1)
-                {
-                    return Ok("Note not found");
-                }
-                else
-                {
-                    result.notes[noteFound] = note;
-
-                    var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
-                    {
-                        WriteIndented = true
-                    });
-
-                    _logger.LogInformation("Recieved Note: {@NoteObj}", serializedDB);
-                    System.IO.File.WriteAllText(filePath, serializedDB);
-
-                    return Ok("Note edited");
-                }
+                //_logger.LogInformation("Recieved Note: {@Note}", serializedNote);
+                return Ok("Placeholder for editting database");
 
             }
             catch (Exception e)
@@ -144,52 +101,16 @@ namespace NotesServer.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteNote([FromBody] NoteObj note)
+        public IActionResult DeleteNote([FromBody] Note note)
         {
             try
             {
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "db.json");
-                NotesJSON result = ReadJSON(filePath);
-
-                int noteFound = result.notes.FindIndex(noteobj => noteobj.id == note.id);
-
-                if (noteFound == -1)
-                {
-                    return Ok("Note not found");
-                }
-                else
-                {
-                    result.notes.RemoveAt(noteFound);
-
-                    var serializedDB = JsonSerializer.Serialize(result, new JsonSerializerOptions
-                    {
-                        WriteIndented = true
-                    });
-
-                    _logger.LogInformation("Recieved Note: {@NoteObj}", serializedDB);
-                    System.IO.File.WriteAllText(filePath, serializedDB);
-
-                    return Ok("Note deleted");
-                }
+                return Ok("Placeholder for deleting entities.");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(e.Message);
-            }
-        }
-
-        private NotesJSON ReadJSON(string filepath)
-        {
-            try
-            {
-                string jsonString = System.IO.File.ReadAllText(filepath);
-                NotesJSON notes = JsonSerializer.Deserialize<NotesJSON>(jsonString);
-                return notes ?? new NotesJSON();
-            } catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return new NotesJSON();
             }
         }
     }
