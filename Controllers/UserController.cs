@@ -1,12 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using NotesServer.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
 
 namespace NotesServer.Controllers
 {
@@ -97,6 +90,40 @@ namespace NotesServer.Controllers
                 _logger.LogError(e, "An error occurred while processing the request.");
                 return StatusCode(500, $"An error occurred: {e.Message}");
             }
+        }
+
+        [HttpPut]
+        public IActionResult UpdateUser([FromBody] User user)
+        {
+            var user_entity = _dbContext.Users.FirstOrDefault(user_in_db => user_in_db.id == user.id);
+            if(user_entity == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            user_entity.username = user.username;
+
+            _dbContext.Update(user_entity);
+            _dbContext.SaveChanges();
+
+            return Ok("User Updated!");
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteUser([FromBody] User user)
+        {
+            var user_entity = _dbContext.Users.Include(u => u.notes).FirstOrDefault(user_in_db => user_in_db.id == user.id);
+            if (user_entity == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            _dbContext.RemoveRange(user_entity.notes);
+            _dbContext.Remove(user_entity);
+
+            _dbContext.SaveChanges();
+
+            return Ok("User deleted");
         }
         public class UUIDGenerator
         {

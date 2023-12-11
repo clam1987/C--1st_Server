@@ -1,11 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using NotesServer.Models;
-using System;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
 
 namespace NotesServer.Controllers
 {
