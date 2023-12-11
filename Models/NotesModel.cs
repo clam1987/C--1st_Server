@@ -8,14 +8,12 @@ public class Note
     public DateTime created_at { get; set; }
     public DateTime updated_at { get; set; }
 
-    public Guid? user_id { get; set; }
-    public User user { get; set; }
+    public string user_id { get; set; }
 
     public Note()
     {
         title = string.Empty; // Initialize the string properties
         content = string.Empty;
-        user_id = Guid.Empty;
-        user = new User(); // Initialize the User property
+        user_id = string.Empty;
     }
 }

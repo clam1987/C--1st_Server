@@ -11,7 +11,7 @@ public class User
 
     public User()
     {
-        id = Guid.NewGuid().ToString();
+        id = string.Empty;
         username = string.Empty; // Initialize the string property
         notes = new List<Note>(); // Initialize the collection property
     }

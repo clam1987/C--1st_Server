@@ -24,12 +24,24 @@ namespace NotesServer.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUser()
+        public IActionResult GetUser([FromQuery] string id)
         {
             try
             {
-                _logger.LogInformation("User got get!");
-                return Ok("User got get!");
+                if (!Guid.TryParse(id, out Guid parsedId))
+                {
+                    return BadRequest("Invalid GUID format");
+                }
+
+                _logger.LogInformation($"Searching for user with id: {parsedId.GetType()}...");
+                var user = _dbContext.Users.Include(user => user.notes).FirstOrDefault(user => user.id == parsedId.ToString());
+                if (user == null)
+                {
+                    return Ok("User not found");
+                }
+
+                _logger.LogInformation("User retrieved successfully!");
+                return Ok(user);
             }
             catch (Exception e)
             {
@@ -61,6 +73,12 @@ namespace NotesServer.Controllers
                     return Ok("Username needed, failed to create user");
                 }
 
+                var user_found = _dbContext.Users.FirstOrDefault(user_in_db => user_in_db.username == user.username);
+                if (user_found != null)
+                {
+                    return Ok("User has been created already!");
+                }
+
                 UUIDGenerator uuid = new UUIDGenerator();
                 User newUser = new User
                 {
@@ -72,7 +90,7 @@ namespace NotesServer.Controllers
                 _dbContext.Users.Add(newUser);
                 _dbContext.SaveChanges();
 
-                return Ok(newUser);
+                return Ok("User created!");
             }
             catch (Exception e)
             {

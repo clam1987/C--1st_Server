@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace NotesServer.Migrations
 {
     [DbContext(typeof(NotesDbContext))]
-    partial class NotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231211191627_NotesPropChange")]
+    partial class NotesPropChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,12 +46,11 @@ namespace NotesServer.Migrations
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("user_id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("user_id")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("userid")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("userid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("id");
 
@@ -59,8 +61,9 @@ namespace NotesServer.Migrations
 
             modelBuilder.Entity("User", b =>
                 {
-                    b.Property<string>("id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("username")
                         .IsRequired()
@@ -75,7 +78,9 @@ namespace NotesServer.Migrations
                 {
                     b.HasOne("User", "user")
                         .WithMany("notes")
-                        .HasForeignKey("userid");
+                        .HasForeignKey("userid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("user");
                 });
