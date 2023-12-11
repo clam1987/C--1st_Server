@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace NotesServer.Controllers
 {
@@ -112,7 +113,20 @@ namespace NotesServer.Controllers
                 //}
 
                 //_logger.LogInformation("Recieved Note: {@Note}", serializedNote);
-                return Ok("Placeholder for editting database");
+                var notes = _dbContext.Notes.FirstOrDefault(note_in_db => note_in_db.id == note.id);
+                if(notes == null)
+                {
+                    return BadRequest("Note not found!");
+                }
+
+                notes.updated_at = DateTime.Now;
+                notes.title = note.title;
+                notes.content = note.content;
+
+                _dbContext.Notes.Update(notes);
+                _dbContext.SaveChanges();
+
+                return Ok("Note updated!");
 
             }
             catch (Exception e)
@@ -127,7 +141,16 @@ namespace NotesServer.Controllers
         {
             try
             {
-                return Ok("Placeholder for deleting entities.");
+                var note_entity = _dbContext.Notes.FirstOrDefault(note_in_db => note_in_db.id == note.id);
+                if(note_entity == null)
+                {
+                    return BadRequest("Note not found");
+                }
+
+                _dbContext.Remove(note_entity);
+                _dbContext.SaveChanges();
+
+                return Ok("Note Deleted!");
             }
             catch (Exception e)
             {
